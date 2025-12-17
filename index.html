@@ -2,128 +2,68 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <title>rhjddjdbc</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terminal-Style Website</title>
-    <style>
-        /* Full-page background image */
-        body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            background: url('1.png') no-repeat center center fixed;
-            background-size: cover;
-            font-family: 'Courier New', monospace;
-            color: #00FF00; /* Terminal Green */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: left;
-        }
-
-        /* Terminal style */
-        .terminal {
-            background-color: rgba(0, 0, 0, 0.8); /* Black background with transparency */
-            padding: 20px;
-            border-radius: 10px;
-            font-size: 18px; /* Smaller font size */
-            white-space: nowrap;
-            width: calc(100vw - 1cm); /* Fullscreen minus 1cm (0.5cm left + 0.5cm right) */
-            height: calc(100vh - 1cm); /* Fullscreen minus 1cm (0.5cm top + 0.5cm bottom) */
-            overflow: auto;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: flex-start;
-        }
-
-        /* Cursor blinks like in the terminal */
-        .cursor {
-            display: inline-block;
-            width: 10px;
-            height: 20px;
-            background-color: #00FF00;
-            animation: blink 1s step-end infinite;
-        }
-
-        @keyframes blink {
-            50% {
-                background-color: transparent;
-            }
-        }
-
-        /* GitHub link in terminal style */
-        .github-link {
-            color: #00FF00;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 20px;
-            font-family: 'Courier New', monospace;
-        }
-
-        .github-link:hover {
-            text-decoration: underline;
-        }
-
-        /* Tree structure for GitHub projects */
-        .tree {
-            margin-top: 20px;
-            font-family: 'Courier New', monospace;
-            color: #00FF00;
-            line-height: 1.8;
-        }
-
-        .tree a {
-            text-decoration: none;
-            color: #00FF00;
-        }
-
-        .tree a:hover {
-            text-decoration: underline;
-        }
-
-        .tree .folder {
-            margin-left: 0px;
-            font-weight: normal;
-        }
-
-        .tree .file {
-            margin-left: 20px;
-        }
-
-        /* Simulated Bash prompt */
-        .prompt {
-            color: #00FF00;
-        }
-
-        /* Bash Prompt with Blinking Cursor */
-        .prompt-cursor {
-            display: inline-block;
-        }
-    </style>
+    <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-    <div class="terminal">
-        <!-- Bash Prompt: whoami -->
-        <div class="prompt">$ whoami</div>
-        <!-- Output of whoami is the GitHub link -->
-        <div><a href="https://github.com/rhjddjdbc" class="github-link" target="_blank">GitHub: rhjddjdbc</a></div>
 
-        <!-- Bash Prompt: ls (Projects) -->
-        <div class="prompt">$ ls</div>
-        <div class="tree">
-            <a href="https://github.com/rhjddjdbc/arch-hardend" class="file" target="_blank">arch-hardend</a>
-            <a href="https://github.com/rhjddjdbc/vaultx" class="file" target="_blank">vaultx</a>
-            <a href="https://github.com/rhjddjdbc/Revers-shell" class="file" target="_blank">Revers-shell</a>
-            <a href="https://github.com/rhjddjdbc/Web-Crawler" class="file" target="_blank">Web-Crawler</a>
-        </div>
+<div class="terminal">
 
-        <!-- Clickable command: cd ~/blog -->
-        <div class="prompt">$ <a href="blog.html" class="github-link">cd ~/blog</a></div>
-
-        <!-- Bash Prompt with Blinking Cursor -->
-        <div class="prompt prompt-cursor">$ <span class="cursor"></span></div>
+    <!-- intro -->
+    <div class="prompt">$ whoami</div>
+    <div class="content">
+<a href="https://github.com/rhjddjdbc" target="_blank">rhjddjdbc</a>
+<a href="blog.html">blog/</a>
+<a href="https://github.com/rhjddjdbc/meme" target="_blank">memes/</a>
+DevOps · Linux · IT Security · Reverse Engineering
     </div>
+
+    <div class="prompt">$ cat about.txt</div>
+    <div class="content">
+Passionate about low-level tooling, security, and automation.
+Learning x86-64 Assembly.
+Building CLI tools with C, Rust and Bash.
+Working on: TCP-based P2P E2E encrypted CLI messenger in Rust (TOFU).
+
+languages/
+  - Bash
+  - C
+  - Rust
+  - x86-64 Assembly
+
+markup/
+  - HTML
+  - CSS
+  - Markdown
+
+tools/
+  - Linux / FreeBSD
+  - Docker / Kubernetes
+  - Git / Jenkins
+  - MySQL
+  - Ghidra
+  - n8n
+    </div>
+
+<!-- projects -->
+<div class="prompt">$ ls projects</div>
+<div class="content">
+[Networking]    <a href="https://github.com/rhjddjdbc/http-rust" target="_blank">http-rust     </a> → Multithreaded HTTP server
+[Security]      <a href="https://github.com/rhjddjdbc/eba" target="_blank">eba           </a> → ELF analyzer
+[Security]      <a href="https://github.com/rhjddjdbc/viscan" target="_blank">viscan        </a> → Malware scanner
+[Recon]         <a href="https://github.com/rhjddjdbc/crawldork" target="_blank">crawldork     </a> → URL discovery
+[Networking]    <a href="https://github.com/rhjddjdbc/Reverse-shell" target="_blank">reverse-shell </a> → GPG + SSH shell
+[Hardening]     <a href="https://github.com/rhjddjdbc/arch-hardened" target="_blank">arch-hardened </a> → Arch Linux hardening
+[Crypto]        <a href="https://github.com/rhjddjdbc/vaultx" target="_blank">vaultx        </a> → AES/RSA password manager
+[Pentest]       <a href="https://github.com/rhjddjdbc/pwny" target="_blank">pwny          </a> → XSS / SQLI / LFI scanner
+[Container]     <a href="https://github.com/rhjddjdbc/dcg" target="_blank">dcg           </a> → Dev container generator
+
+   </div>
+
+    <!-- cursor -->
+<div class="prompt">$ <span class="cursor"></span></div>
+</div>
+
 </body>
 </html>
-
