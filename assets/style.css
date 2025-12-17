@@ -1,0 +1,85 @@
+/* === GLOBAL === */
+body {
+    margin: 0;
+    height: 100vh;
+    background: url('../assets/1.png') no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Courier New', monospace;
+    color: #00ff00;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* === TERMINAL === */
+.terminal {
+    background: rgba(0, 0, 0, 0.4); /* leichter, damit Hintergrundbild sichtbar bleibt */
+    width: calc(100vw - 1cm);
+    height: calc(100vh - 1cm);
+    padding: 20px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    color: #00ff00;
+}
+
+/* === PROMPT === */
+.prompt {
+    margin-bottom: 10px;
+}
+
+/* Links innerhalb des Prompts (z.B. cd /home/user) */
+.prompt a {
+    color: #00ff00;
+    text-decoration: none;
+    background: transparent; /* wichtig für Hintergrundbild */
+}
+
+.prompt a:hover {
+    text-decoration: underline;
+    background: transparent;
+}
+
+/* === CONTENT === */
+.content {
+    margin-left: 40px;
+    color: #ffffff;
+    white-space: pre-wrap;
+    line-height: 1.6;
+}
+
+/* === LINKS allgemein === */
+a {
+    color: #00ff00;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* === CURSOR === */
+.cursor {
+    display: inline-block;
+    width: 10px;
+    height: 20px;
+    background: #00ff00;
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+    50% { background: transparent; }
+}
+
+/* === TABLE === */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+td, th {
+    border: 1px solid #00ff00;
+    padding: 10px;
+}
+
