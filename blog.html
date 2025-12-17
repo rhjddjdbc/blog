@@ -2,116 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog - rhjddjdbc</title>
-    <style>
-        /* Terminal-style page setup */
-        body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            background: url('1.png') no-repeat center center fixed;
-            background-size: cover;
-            font-family: 'Courier New', monospace;
-            color: #00FF00; /* Terminal green */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: left;
-        }
-
-        .terminal {
-            background-color: rgba(0, 0, 0, 0.8); /* Black background with transparency */
-            padding: 20px;
-            border-radius: 10px;
-            font-size: 18px; /* Smaller font */
-            white-space: nowrap;
-            width: calc(100vw - 1cm); /* Fullscreen minus 1cm (0.5cm on each side) */
-            height: calc(100vh - 1cm); /* Fullscreen minus 1cm (0.5cm on top and bottom) */
-            overflow: auto;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: flex-start;
-        }
-
-        .prompt {
-            color: #00FF00; /* Terminal green for the prompt */
-        }
-
-        /* ls -l output styling */
-        .file-list {
-            margin-top: 20px;
-            font-family: 'Courier New', monospace;
-            color: #00FF00; /* Terminal green for output */
-        }
-
-        .file-details {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-        }
-
-        /* Simulate the `ls -l` format: -rwxr-xr-x 1 user group 1234 Jan  1 12:34 filename */
-        .file-info {
-            flex-grow: 1;  /* To make sure file info takes up all available space */
-            padding-right: 20px;  /* Padding to ensure even spacing between metadata and filename */
-        }
-
-        .file-name {
-            color: #00FF00; /* Green for file names */
-            text-decoration: none;
-        }
-
-        .file-name:hover {
-            text-decoration: underline; /* Underline on hover */
-        }
-
-        /* Blinking cursor like in a terminal */
-        .cursor {
-            display: inline-block;
-            width: 10px;
-            height: 20px;
-            background-color: #00FF00;
-            animation: blink 1s step-end infinite;
-        }
-
-        @keyframes blink {
-            50% {
-                background-color: transparent;
-            }
-        }
-
-        /* Final prompt with blinking cursor */
-        .prompt-cursor {
-            display: inline-block;
-        }
-    </style>
+    <title>Blog</title>
+    <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-    <div class="terminal">
-        <!-- Bash prompt: 'ls -l posts' command -->
-        <div class="prompt">$ ls -l posts</div>
-        <div class="file-list">
-            <!-- Simulating the long listing output with aligned columns -->
-            <div class="file-details">
-                <div class="file-info">-rw-r--r-- 1 user group  1024 Jan  1 12:34</div>
-                <a href="posts/hardend.html" class="file-name">hardend.html</a>
-            </div>
-            <div class="file-details">
-                <div class="file-info">-rw-r--r-- 1 user group  2048 Jan  2 14:20</div>
-                <a href="posts/tor-vs-vpn.html" class="file-name">tor-vs-vpn.html</a>
-            </div>
-            <div class="file-details">
-                <div class="file-info">-rw-r--r-- 1 user group  1500 Jan  3 16:15</div>
-                <a href="posts/whonix-vs-Tails.html" class="file-name">whonix-vs-Tails.html</a>
-            </div>
-        </div>
+<div class="terminal">
 
-        <!-- Final bash prompt with blinking cursor -->
-        <div class="prompt prompt-cursor">$ <span class="cursor"></span></div>
+    <div class="prompt">$ ls posts</div>
+
+    <div class="content">
+<a href="posts/hardend.html">hardend.html</a>
     </div>
+
+  <span class="prompt">$</span> 
+  <a href="index.html" class="prompt">cd /home/user</a>
+  <span class="cursor"></span>
+
+</div>
 </body>
 </html>
-
