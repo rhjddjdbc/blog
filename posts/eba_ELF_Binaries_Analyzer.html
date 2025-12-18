@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ELF Binaries Analyzer</title>
+    <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="terminal">
+
+    <div class="prompt">$ cat eba_ELF_Binaries_Analyzer.txt</div>
+
+    <div class="content">
+eba — ELF Binaries Analyzer
+A practical toolkit for static ELF analysis on Linux
+
+
+Motivation
+
+ELF files are the backbone of every Linux system.
+Every binary, shared library, and many kernel artifacts follow the Executable and Linkable Format (ELF).
+
+However, many developers and security analysts immediately reach for heavy tools such as:
+
+- Ghidra
+- IDA Pro
+- radare2
+
+These tools are powerful—but often overkill when you just need quick answers:
+
+- What libraries are loaded?
+- Are there unusual sections?
+- Is the binary packed or encrypted?
+- Which symbols are visible?
+- What does the entry code look like?
+
+eba was developed to meet exactly this need.
+
+A lightweight, scriptable toolkit
+that provides quick static insights into ELF binaries
+— without executing the binary.
+
+Design Philosophy
+
+eba follows three simple principles:
+
+1. Static first
+   No code is executed. All information comes from pure file analysis.
+   ->  Safe for malware samples
+
+2. Unix-style Toolchain
+   Instead of a monolithic program, eba consists of:
+   - a main shell script
+   - several small C helper programs
+   Each tool does one thing well.
+
+3. Transparency over Magic
+   No "AI magic," no heuristics without explanation.
+   Everything is based on:
+   - ELF headers
+   - Sections
+   - Program Headers
+   - known metrics (Entropy, DT_NEEDED, Symbols)
+
+Features in Detail
+
+ELF Header Summary
+
+The ELF header is the entry point for any analysis.
+
+eba shows, among other things:
+- Architecture (x86_64, ARM, etc.)
+- Type (ET_EXEC, ET_DYN)
+- Entry Point
+- Number of sections and segments
+
+-> Immediate assessment:
+Static binary? PIE? Shared object?
+
+Section Listing
+
+The tool `sections` lists all ELF sections with:
+- Name
+- Type
+- Virtual Address
+- File Offset
+- Size
+
+Why is this important?
+- Unusual sections → Packing / Obfuscation
+- Very large .rodata → Embedded data
+- Missing .symtab → Stripping / Hardening
+
+Strings Extraction
+
+eba extracts the first 10 printable strings.
+
+This may sound trivial—but it’s extremely effective:
+- URLs
+- IP addresses
+- Debug artifacts
+- Suspicious function names
+
+Additionally, eba marks potentially dangerous strings, e.g.:
+- system
+- strcpy
+- gets
+- malloc
+
+-> Especially helpful in malware triage.
+
+Entropy Analysis (global & per section)
+
+Entropy is one of the most important metrics in binary analysis.
+
+eba calculates:
+- Overall entropy of the file
+- Shannon entropy per section
+
+Interpretation:
+
+| Entropy  | Meaning                             |
+|----------|-------------------------------------|
+| ~0.0     | Empty / BSS                         |
+| 3–5      | Data / Text                         |
+| >7.5     | Compressed / Encrypted              |
+
+-> Very high entropy in .text or .data is a strong warning signal.
+
+Symbol Table Inspection
+
+eba shows the first 40 symbols from the symbol table.
+
+Even in stripped binaries, often the following are visible:
+- .dynsym
+- Import symbols
+
+-> Quickly recognize:
+- Imported libc functions
+- Own export APIs
+- Debug leaks
+
+DT_NEEDED — Shared Library Dependencies
+
+The tool `list_dtneeded` parses the PT_DYNAMIC segment and extracts all DT_NEEDED entries.
+
+Examples:
+- libc.so.6
+- libcrypto.so
+- libcurl.so
+
+Why is this relevant?
+- Unexpected dependencies → Red flag
+- Static vs dynamic
+- Malware often uses minimal or unusual imports
+
+Disassembly (Capstone)
+
+Using Capstone, eba disassembles the first 20 instructions.
+
+The goal is not a full analysis, but to:
+- Recognize entry code
+- Detect compiler patterns
+- Discover unusual prologs
+
+-> Ideal before switching to Ghidra.
+
+SHA256 Hashing
+
+Integrity and comparison:
+- Cluster malware samples
+- Compare builds
+- Check reproducibility
+
+eba uses OpenSSL for clean SHA256 calculation.
+
+Interactive Section Viewer
+
+After analysis, eba starts an interactive hex viewer:
+- Select by section name
+- Colored hexdump
+- Scrollbar via `less`
+
+-> Perfect for:
+- Embedded payloads
+- Encrypted blobs
+- Quick byte inspection
+
+Installation & Dependencies
+
+Required Tools:
+- bash
+- binutils (readelf, strings)
+- hexdump, dd
+- less
+- python3
+- gcc
+- libcapstone
+- libcrypto (OpenSSL)
+
+Debian / Ubuntu:
+sudo apt install build-essential binutils python3 libcapstone-dev libssl-dev less
+
+Arch Linux:
+
+sudo pacman -S base-devel binutils python less openssl capstone
+
+Build:
+
+make
+
+All C tools are built in `bin/`.
+
+Usage:
+
+chmod +x analyze.sh
+./analyze.sh -f /path/to/binary
+
+Process:
+
+- Automatic analysis
+- Output of all metrics
+- Switch to interactive mode
+- Select section or press `q` to quit
+
+Project Structure:
+
+.
+├── analyze.sh
+├── bin/
+│   ├── disasm
+│   ├── entropy_sections
+│   ├── hash_sha256
+│   ├── list_dtneeded
+│   └── sections
+├── *.c
+└── Makefile
+
+Typical Use Cases:
+
+- Malware triage
+- Entropy spikes
+- Minimal imports
+- Encrypted sections
+
+Reverse Engineering:
+
+- Quick preliminary analysis
+- Find symbol leaks
+- Recognize toolchains
+
+Security Audits:
+
+- Hardening checks
+- Dependency audit
+- Stripped vs unstripped binaries
+
+DevOps / CI:
+
+- Binary fingerprinting
+- Regression checks
+- Supply chain audits
+
+Why not a large framework?
+
+eba is deliberately not:
+
+ A Ghidra replacement
+ A debugger
+ An emulator
+
+It is a scout tool.
+
+First, get an overview, then dig deeper.
+
+    </div>
+
+  <span class="prompt">$</span> 
+  <a href="../blog.html" class="prompt">cd /home/user/blog</a>
+  <span class="cursor"></span>
+</div>
+</body>
+</html>
+

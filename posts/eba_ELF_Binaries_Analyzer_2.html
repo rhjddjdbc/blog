@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ELF Binaries Analyzer 2</title>
+    <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="terminal">
+
+    <div class="prompt">$ cat eba_ELF_Binaries_Analyzer2.txt</div>
+
+    <div class="content">
+eba — ELF Binaries Analyzer
+Part 2: DT_NEEDED, .dynsym and the Dynamic Linker
+
+
+Introduction
+
+In Part 1, we looked at what eba does and why it exists.
+
+In this article, we go deeper and answer the more interesting question:
+
+How does eba extract dynamic linking information from an ELF binary?
+
+We will dissect:
+
+- the dynamic segment (PT_DYNAMIC)
+- DT_NEEDED entries
+- the dynamic symbol table (.dynsym)
+- the role of PLT and GOT
+
+All examples are based on real code used inside eba.
+
+
+The Dynamic Linker in a Nutshell
+
+When you execute a dynamically linked ELF binary:
+
+- the kernel maps the ELF into memory
+- control is transferred to the dynamic linker (ld-linux)
+- the linker:
+  - loads shared libraries
+  - resolves symbols
+  - patches the GOT
+- only then does execution reach main()
+
+Everything the linker needs lives in the PT_DYNAMIC segment.
+
+
+PT_DYNAMIC — The Heart of Runtime Metadata
+
+The dynamic segment is referenced via the program header table.
+
+eba locates it by scanning all program headers:
+
+    for (int i = 0; i < ehdr.e_phnum; i++) {
+        if (phdrs[i].p_type == PT_DYNAMIC) {
+            dyn_offset = phdrs[i].p_offset;
+            dyn_size   = phdrs[i].p_filesz;
+            break;
+        }
+    }
+
+This segment contains an array of Elf64_Dyn entries:
+
+    typedef struct {
+        Elf64_Sxword d_tag;
+        union {
+            Elf64_Xword d_val;
+            Elf64_Addr  d_ptr;
+        } d_un;
+    } Elf64_Dyn;
+
+Each entry answers a question the linker might ask.
+
+
+DT_NEEDED — Which Libraries Are Required?
+
+DT_NEEDED entries specify shared library dependencies.
+
+Example:
+
+- DT_NEEDED → libc.so.6
+- DT_NEEDED → libcrypto.so.3
+
+eba extracts them by:
+
+- locating DT_STRTAB
+- mapping virtual addresses to file offsets
+- reading the string table
+- resolving offsets
+
+    if (d->d_tag == DT_NEEDED) {
+        printf("  %s\n", &strtab[d->d_un.d_val]);
+    }
+
+
+Why This Matters
+
+- unexpected libraries → suspicious
+- minimal imports → shellcode-like behavior
+- crypto libraries → encryption, TLS, ransomware potential
+
+
+Virtual Addresses vs File Offsets
+
+A common pitfall when parsing ELF:
+
+DT_STRTAB does not give a file offset.
+It gives a virtual address.
+
+eba solves this by walking PT_LOAD segments:
+
+    Elf64_Off vaddr_to_offset(Elf64_Addr vaddr) {
+        return p_offset + (vaddr - p_vaddr);
+    }
+
+This mapping step is essential for any dynamic ELF analysis.
+
+
+.dynsym — The Dynamic Symbol Table
+
+.dynsym contains symbols visible to the dynamic linker.
+
+These include:
+
+- imported functions
+- exported APIs
+- global variables
+
+eba locates it via:
+
+- DT_SYMTAB → virtual address
+- DT_SYMENT → size of Elf64_Sym
+
+Each symbol looks like this:
+
+    typedef struct {
+        Elf64_Word  st_name;
+        unsigned char st_info;
+        Elf64_Addr  st_value;
+        Elf64_Xword st_size;
+    } Elf64_Sym;
+
+
+Import vs Export Detection
+
+eba distinguishes imports from exports using:
+
+    if (sym->st_value == 0)
+        printf("IMPORT\n");
+    else
+        printf("EXPORT\n");
+
+Why it works:
+
+- imported symbols have no address yet
+- exported symbols already have one
+
+This allows instant classification without relocations.
+
+
+Symbol Binding & Type
+
+Using macros:
+
+- ELF64_ST_BIND(st_info)
+- ELF64_ST_TYPE(st_info)
+
+eba can tell:
+
+- GLOBAL vs LOCAL
+- FUNC vs OBJECT
+
+Example output:
+
+    printf          FUNC   GLOBAL IMPORT
+    my_api          FUNC   GLOBAL EXPORT
+
+
+PLT — Procedure Linkage Table
+
+The PLT is a trampoline layer.
+
+Imported functions do not jump directly to libc.
+Instead:
+
+    call printf@plt
+
+First call:
+
+- jumps into the dynamic linker
+- resolves the symbol
+- patches the GOT
+
+Later calls:
+
+- jump directly to the resolved address
+
+eba does not resolve PLT stubs yet — but it detects their presence
+indirectly via .dynsym imports.
+
+
+GOT — Global Offset Table
+
+The GOT holds addresses of resolved symbols.
+
+Key properties:
+
+- writable at runtime
+- frequently targeted by exploits
+- critical for understanding control flow hijacking
+
+Future versions of eba may:
+
+- detect GOT overwrite potential
+- inspect RELRO status
+
+
+Why This Matters for Security
+
+Malware Analysis
+
+- shellcode-style malware → no DT_NEEDED
+- packers → high entropy + few imports
+- stealers → libc + networking libraries
+
+
+Binary Hardening
+
+- full RELRO?
+- PIE enabled?
+- stripped symbols?
+
+Dynamic metadata tells the full story.
+
+
+Practical Example
+
+    $ ./eba /bin/ls
+
+You immediately learn:
+
+- which libraries are loaded
+- which symbols are imported
+- whether the binary is stripped
+- how complex runtime linking is
+
+All before opening a GUI tool.
+
+
+Limitations
+
+eba currently:
+
+- assumes ELF64
+- assumes valid layouts
+- does not resolve relocations
+- does not follow PLT chains
+
+This is intentional.
+
+
+What Comes Next (Part 3)
+
+In the next article:
+
+- PLT/GOT resolution in C
+- detecting lazy vs immediate binding
+- simple exploitability heuristics
+- turning eba into a scoring engine
+
+
+Conclusion
+
+Understanding DT_NEEDED and .dynsym means understanding how Linux binaries actually run.
+
+eba doesn’t hide this complexity — it exposes it.
+
+If you understand the loader, you understand the binary.
+
+    </div>
+
+  <span class="prompt">$</span> 
+  <a href="../blog.html" class="prompt">cd /home/user/blog</a>
+  <span class="cursor"></span>
+</div>
+</body>
+</html>
+
