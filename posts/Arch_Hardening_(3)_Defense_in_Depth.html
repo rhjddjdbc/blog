@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Arch Linux Hardening Defense-in-Depth 3</title>
+    <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="terminal">
+
+    <div class="prompt">$ cat Arch_Hardening_(3)_Defense_in_Depth.txt</div>
+
+    <div class="content">
+Arch Linux Hardening Guide – Part 3
+Advanced measures: from solid to paranoid
+
+
+Your base setup from Part 2 (hardened kernel, AppArmor, nftables, USBGuard, auditd, etc.) already provides strong protection. 
+This second part adds advanced but still practical measures that further raise the security level.
+
+All techniques remain purely software- and firmware-based. No Secure Boot, no TPM, no special hardware is required. 
+Everything works on standard Arch Linux systems.
+The focus is defense in depth: multiple independent layers that make attacks harder even if one layer fails.
+
+Protecting the bootloader with a password
+An unprotected bootloader allows trivial system manipulation. Attackers with physical access can modify kernel parameters, boot into single-user mode, or bypass security features.
+
+What is done (GRUB example):
+
+Generate a strong PBKDF2 password hash:
+grub-mkpasswd-pbkdf2
+
+Copy the generated hash and add it to GRUB:
+sudo tee /etc/grub.d/40_custom
+set superusers="admin"
+password_pbkdf2 admin grub.pbkdf2.sha512.10000.YOUR_HASH_HERE
+
+
+Regenerate GRUB:
+sudo grub-mkconfig -o /boot/grub/grub.cfg
+
+For systemd-boot users:
+sudo bootctl set-password "strong-password"
+
+Why this is good:
+Prevents kernel parameter tampering.
+Blocks recovery and single-user boot attacks.
+Strong protection against physical attacks.
+For best results, combine this with:
+
+BIOS/UEFI password
+
+Disabled external boot devices (USB, PXE)
+
+Application sandboxing with Flatpak
+Application sandboxing isolates high-risk applications such as browsers, chat clients, PDF viewers, and game launchers.
+
+2025 recommendation:
+Use Flatpak instead of (or in addition to) Firejail.
+
+What is done:
+
+Install Flatpak and Flathub:
+sudo pacman -S flatpak
+flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
+Install sandboxed applications (examples):
+flatpak install flathub org.mozilla.firefox
+flatpak install flathub com.valvesoftware.Steam
+
+Install Flatseal (permission management GUI):
+flatpak install flathub com.github.tchx84.Flatseal
+
+Using Flatseal:
+Limit filesystem access (for example Downloads only).
+Disable unnecessary device and portal access.
+Fine-tune permissions per application.
+
+Why Flatpak is preferred:
+Uses bubblewrap for unprivileged sandboxing.
+No SUID binaries like classic Firejail.
+Portal-based access control for files and devices.
+Easy permission management via Flatseal.
+Wayland-native and future-proof.
+Widely adopted across modern Linux distributions.
+
+Note:
+Firejail remains useful for native and AUR applications that are not available as Flatpaks.
+
+Enabling hardened_malloc
+
+hardened_malloc replaces the default glibc allocator with a security-focused allocator designed to mitigate memory corruption attacks.
+
+What is done:
+
+Install hardened_malloc:
+yay -S hardened_malloc
+
+Test per application first:
+LD_PRELOAD=/usr/lib/libhardened_malloc.so firefox
+
+If stable, enable globally:
+echo "/usr/lib/libhardened_malloc.so" | sudo tee /etc/ld.so.preload
+
+Optional lighter variant:
+libhardened_malloc-light.so
+
+Why this is good:
+Strong protection against heap-based exploits.
+Guard pages, randomization, and secure memory zeroing.
+Heap exploitation is one of the most common modern attack vectors.
+High security benefit with moderate overhead.
+Particularly effective for browsers and network-facing applications.
+
+Warning:
+Test carefully before global activation.
+Some applications may break and require exclusions.
+
+Additional hardening sysctl parameters
+
+These settings complement the sysctl configuration from Part 1 and are especially useful for exploit mitigation and hardened_malloc compatibility.
+
+Recommended additions:
+
+kernel.yama.ptrace_scope=3
+Prevents ptrace usage by normal users.
+Limits debugging and exploit techniques.
+
+kernel.unprivileged_bpf_disabled=1
+Disables unprivileged BPF.
+Mitigates entire classes of kernel exploitation and side-channel attacks.
+
+vm.max_map_count=1048576
+Required for hardened_malloc.
+Allows a large number of memory mappings for guard pages.
+
+These can be added to the existing sysctl configuration file:
+sudo tee -a /etc/sysctl.d/99-sec.conf
+kernel.yama.ptrace_scope=3
+kernel.unprivileged_bpf_disabled=1
+vm.max_map_count=1048576
+
+sudo sysctl --system
+
+Further quick wins
+
+Kernel lockdown mode:
+Add the following to GRUB kernel parameters:
+lockdown=confidentiality
+
+This blocks kernel debugging interfaces and reduces attack surface.
+
+Blacklist unused kernel modules:
+Create /etc/modprobe.d/blacklist.conf
+Disable unused subsystems such as:
+
+- Bluetooth
+- Webcam drivers
+- Rare network protocols
+
+Automated security auditing:
+sudo pacman -S lynis
+Run regularly:
+lynis audit system
+
+Lynis provides:
+Configuration audits
+Misconfiguration detection
+Actionable hardening suggestions
+
+Conclusion – Part 3
+
+With a protected bootloader, Flatpak sandboxing, hardened_malloc, and additional kernel hardening, your Arch Linux system reaches a very high security level.
+This setup remains practical, maintainable, and hardware-independent. No Secure Boot, no TPM, no vendor lock-in.
+Start with Flatpak and Flatseal for immediate daily benefits. Add hardened_malloc once your system is stable. Combine everything with the base hardening from Part 1 for a robust, layered security posture.
+Security is not about a single feature, but about stacking multiple defenses that fail gracefully.	    
+    </div>
+  <span class="prompt">$</span> 
+  <a href="../blog.html" class="prompt">cd /home/user/blog</a>
+  <span class="cursor"></span>
+</div>
+</body>
+</html>
+

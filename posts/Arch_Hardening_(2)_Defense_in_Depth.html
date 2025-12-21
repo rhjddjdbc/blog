@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Arch Linux Hardening Defense-in-Depth 2</title>
+    <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="terminal">
+
+    <div class="prompt">$ cat Arch_Hardening_(2)_Defense_in_Depth.txt</div>
+
+    <div class="content">
+Arch Linux Hardening Guide - Part 2
+A practical guide based on my hardening script
+
+
+Arch Linux gives you full control, but also full responsibility for security. 
+This guide follows the exact steps of my hardening script and explains what is done and why it is useful.
+
+The focus is a balanced desktop or laptop setup: strong protection against common attack vectors without unnecessarily harming everyday usability. 
+All steps can be performed manually; the script is simply an automated reference.
+
+Requirements:
+Fresh Arch Linux installation
+Normal user account with sudo privileges
+Backup of your data
+Test in a VM before using on a real system
+
+Replacing sudo with doas
+
+What is done:
+opendoas is installed and configured with a minimal policy.
+
+Commands:
+sudo pacman -S opendoas
+echo "permit :wheel" | sudo tee /etc/doas.conf
+
+Why this is good:
+doas is significantly smaller and simpler than sudo.
+Less code means a smaller attack surface.
+It has no plugin system and fewer complex policies.
+The persist option allows temporary authentication caching.
+doas originates from OpenBSD and is widely trusted in hardened environments.
+
+Important:
+sudo is NOT removed immediately.
+The script verifies that doas works correctly before removing sudo at the very end.
+
+Installing yay manually (AUR helper)
+
+What is done:
+yay is installed manually without already having an AUR helper.
+
+Commands:
+doas pacman -S --needed git base-devel
+git clone https://aur.archlinux.org/yay.git
+/tmp/yay
+cd /tmp/yay
+makepkg -si
+
+Why this is good:
+AUR packages are built locally.
+PKGBUILDs can be inspected before installation.
+No precompiled binaries are downloaded.
+This is the safest and recommended way to install yay.
+
+Installing the hardened kernel
+
+What is done:
+The hardened Arch kernel and headers are installed.
+
+Commands:
+doas pacman -Sy linux-hardened linux-hardened-headers
+
+Why this is good:
+linux-hardened includes additional exploit mitigations.
+Improves memory hardening and sanity checks.
+Well maintained and fully compatible with Arch.
+Excellent security-to-usability balance.
+
+Hardening GRUB boot parameters
+
+What is done:
+Kernel boot parameters are updated and GRUB is regenerated.
+
+Commands:
+doas sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="quiet apparmor=1 security=apparmor slab_nomerge random.trust_cpu=off page_alloc.shuffle=1 loglevel=3"/' /etc/default/grub
+doas grub-mkconfig -o /boot/grub/grub.cfg
+
+Why this is good:
+AppArmor is enabled at boot.
+slab_nomerge makes heap exploitation significantly harder.
+random.trust_cpu=off avoids blind trust in CPU RNG.
+page_alloc.shuffle randomizes memory allocation.
+All options have minimal performance impact.
+
+Enabling AppArmor and installing profiles
+
+What is done:
+AppArmor is installed and enabled.
+Additional profiles are installed from the AUR.
+
+Commands:
+doas pacman -S apparmor
+doas systemctl enable --now apparmor
+yay -S apparmor-profiles-git
+
+Profile location:
+/etc/apparmor.d/
+
+Important directories:
+/etc/apparmor.d/abstractions/
+Reusable rule sets.
+
+/etc/apparmor.d/local/
+Local overrides that survive updates.
+
+Note:
+Profiles may initially run in complain mode.
+The script does not force enforce mode automatically to avoid breaking applications.
+Profiles should be tuned first and then enforced manually if desired.
+
+Why this is good:
+AppArmor provides Mandatory Access Control.
+Compromised applications are heavily restricted.
+Damage from browser or userland exploits is contained.
+
+USBGuard for USB device control
+
+What is done:
+USBGuard is installed, enabled, and a policy is generated from existing devices.
+
+Commands:
+doas pacman -S usbguard
+doas systemctl enable --now usbguard
+doas usbguard generate-policy | doas tee /etc/usbguard/rules.conf
+
+Why this is good:
+Protects against BadUSB and malicious USB devices.
+Only known devices are allowed.
+Strong physical security for laptops and public environments.
+
+Firewall hardening with nftables
+
+What is done:
+nftables is installed and enabled.
+A default-drop firewall policy is applied.
+
+Commands:
+doas pacman -S nftables
+doas systemctl enable --now nftables
+
+Firewall rules:
+table inet filter {
+chain input {
+type filter hook input priority 0;
+policy drop;
+ct state established,related accept
+iif lo accept
+ip protocol icmp accept
+tcp dport {22, 80, 443} accept
+}
+}
+
+Why this is good:
+Default drop blocks unsolicited traffic.
+Only explicitly allowed services are reachable.
+nftables is the modern Linux firewall framework.
+
+Sysctl hardening
+
+What is done:
+Kernel, filesystem, and network hardening parameters are applied.
+
+Commands:
+doas tee /etc/sysctl.d/99-sec.conf 
+kernel.kptr_restrict=2
+kernel.dmesg_restrict=1
+kernel.randomize_va_space=2
+fs.protected_symlinks=1
+fs.protected_hardlinks=1
+net.ipv4.conf.all.rp_filter=1
+net.ipv4.conf.default.rp_filter=1
+net.ipv4.tcp_syncookies=1
+
+
+doas sysctl --system
+
+Why this is good:
+Prevents kernel information leaks.
+Enforces full ASLR.
+Mitigates symlink and hardlink attacks.
+Improves resistance to network spoofing.
+
+File integrity monitoring with AIDE
+
+What is done:
+AIDE is installed from the AUR and initialized.
+
+Commands:
+yay -S aide
+doas aide --init
+doas mv /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
+
+Why this is good:
+Detects unauthorized system file changes.
+Provides early warning of compromise or persistence.
+
+Malware scanning with ClamAV
+
+What is done:
+ClamAV is installed and signature updates are enabled.
+
+Commands:
+doas pacman -S clamav
+doas systemctl enable --now clamav-freshclam
+clamscan -r --bell -i "$HOME"
+
+Why this is good:
+Linux malware exists, especially cross-platform threats.
+Useful for downloads, email attachments, and shared files.
+
+Encrypted DNS with dnscrypt-proxy
+
+What is done:
+dnscrypt-proxy is installed and configured with DNSSEC.
+LibreDNS is used as the resolver.
+
+Commands:
+doas pacman -S dnscrypt-proxy
+doas sed -i 's/^# server_names =.*/server_names = ["libredns"]/' /etc/dnscrypt-proxy/dnscrypt-proxy.toml
+doas sed -i 's/^# require_dnssec = false/require_dnssec = true/' /etc/dnscrypt-proxy/dnscrypt-proxy.toml
+doas systemctl enable --now dnscrypt-proxy
+echo "nameserver 127.0.0.1" | doas tee /etc/resolv.conf
+
+Note:
+Other DNS managers (NetworkManager, systemd-resolved) should be adjusted or disabled to avoid conflicts.
+
+Why this is good:
+Encrypts DNS traffic.
+Prevents DNS spoofing and passive surveillance.
+DNSSEC validates responses.
+
+System-wide blocking with hBlock
+
+What is done:
+hBlock is installed using the official installer.
+
+Commands:
+doas pacman -S hblock
+hblock
+
+Why this is good:
+Hosts-file-based blocking.
+Blocks ads, trackers, malware, and phishing domains.
+No browser extensions required.
+Minimal resource usage.
+
+Auditing with auditd
+
+What is done:
+auditd is installed, enabled, and hardened rules are applied.
+
+Commands:
+doas pacman -S audit
+doas systemctl enable --now auditd
+
+Audit rules include:
+Monitoring doas usage
+Changes to /etc
+User and group database changes
+Kernel module loading and unloading
+/home and /boot access
+Time and clock modifications
+
+Why this is good:
+Provides detailed security event logging.
+Essential for intrusion detection and forensic analysis.
+
+Safe removal of sudo
+
+What is done:
+sudo is removed only after verifying that doas:
+
+- exists
+- works correctly
+- has a valid configuration
+- can perform privileged actions
+- This prevents accidental lockout and ensures a safe transition.
+
+Conclusion - Part 2
+
+This script-based hardening approach creates a solid and realistic Arch Linux security baseline. It significantly raises the bar against common attack vectors while remaining usable for daily desktop or laptop use.
+The script automates exactly the steps described in this document. Use it with care, review configurations, and adapt them to your personal threat model.
+Security is not a one-time action, but a continuous process. 
+    </div>
+
+  <span class="prompt">$</span> 
+  <a href="../blog.html" class="prompt">cd /home/user/blog</a>
+  <span class="cursor"></span>
+</div>
+</body>
+</html>
+

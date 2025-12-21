@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Arch Linux Hardening Defense-in-Depth</title>
+    <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="terminal">
+
+    <div class="prompt">$ cat Arch_Hardening_(1)_Defense_in_Depth.txt</div>
+
+    <div class="content">
+Arch Linux Security Hardening – Overall Security Concept
+A layered defense-in-depth strategy
+
+This document explains the complete security concept behind the Arch Linux hardening
+setup described in Part 1 and Part 2. It focuses on why each component exists and how
+all components work together.
+
+The goal is not absolute security, but a robust, realistic, and maintainable system
+that significantly raises the cost of attacks while remaining usable for daily
+desktop or laptop use.
+
+
+1. Threat model and design goals
+
+Primary threat model:
+- Remote exploitation via browsers, network services, or malicious files
+- Local privilege escalation
+- Persistence after compromise
+- Physical attacks with temporary access (lost laptop, hotel, shared space)
+- Malware and cross-platform threats
+
+Out of scope:
+- Nation-state adversaries with full hardware access
+- Firmware or CPU-level supply-chain attacks
+- Cold-boot and invasive hardware attacks
+
+Design goals:
+- Defense in depth instead of single-point security
+- Fail-safe behavior when individual layers break
+- No dependency on TPM or Secure Boot
+- Auditable, transparent configuration
+- No security theater
+
+
+2. Boot and early system integrity layer
+
+Components:
+- Hardened kernel
+- Hardened kernel boot parameters
+- Optional kernel lockdown
+- Bootloader password protection
+
+Role:
+This layer protects the system before userspace starts.
+
+Contribution:
+- Prevents kernel parameter tampering
+- Blocks recovery-mode abuse
+- Ensures the system always boots in a hardened state
+
+If this layer fails, all higher-level security controls become irrelevant.
+
+
+3. Kernel attack surface reduction
+
+Components:
+- linux-hardened
+- sysctl hardening
+- Disabled unprivileged BPF
+- ptrace restrictions
+- Kernel module blacklisting
+
+Role:
+Reduce reachable kernel attack surface.
+
+Contribution:
+- Removes entire exploit classes
+- Makes kernel memory harder to inspect
+- Limits escalation paths after userland compromise
+
+This layer increases the difficulty of turning bugs into full system compromise.
+
+
+4. Mandatory Access Control (MAC)
+
+Components:
+- AppArmor
+- AppArmor profiles
+- Local profile overrides
+
+Role:
+Restrict what applications are allowed to do, even when compromised.
+
+Contribution:
+- Limits filesystem access
+- Restricts capabilities and network usage
+- Prevents lateral movement
+
+An exploited application is contained instead of becoming a stepping stone.
+
+
+5. Application sandboxing
+
+Components:
+- Flatpak
+- Bubblewrap
+- Portals
+- Flatseal permission management
+- Optional Firejail for native apps
+
+Role:
+Second isolation layer above MAC.
+
+Contribution:
+- Strong GUI application isolation
+- No SUID dependencies
+- Explicit permission granting
+- Easy auditing of application privileges
+
+This layer assumes AppArmor may fail and compensates for it.
+
+
+6. Memory exploitation resistance
+
+Components:
+- hardened_malloc
+- Hardened kernel memory features
+- Increased vm.max_map_count
+
+Role:
+Target modern heap exploitation techniques.
+
+Contribution:
+- Guard pages and allocator randomization
+- Secure memory zeroing
+- Unreliable and noisy exploitation
+
+Bugs may exist, but exploitation becomes significantly harder.
+
+
+7. Network exposure control
+
+Components:
+- nftables (default drop policy)
+- dnscrypt-proxy
+- DNSSEC validation
+- hBlock
+
+Role:
+Control inbound and outbound communication.
+
+Contribution:
+- Blocks unsolicited inbound traffic
+- Prevents DNS spoofing and surveillance
+- Blocks malicious domains system-wide
+
+This layer shrinks the external attack surface.
+
+
+8. Peripheral and physical attack mitigation
+
+Components:
+- USBGuard
+- Bootloader password
+- Optional BIOS/UEFI hardening
+
+Role:
+Protect against physical attacks and malicious peripherals.
+
+Contribution:
+- Blocks BadUSB and HID attacks
+- Prevents boot-time tampering
+- Limits damage from brief physical access
+
+Physical access no longer equals instant compromise.
+
+
+9. Detection and visibility
+
+Components:
+- auditd with hardened rules
+- AIDE
+- Lynis
+
+Role:
+Make attacks visible and auditable.
+
+Contribution:
+- Logs privilege escalation and config changes
+- Detects unauthorized file modifications
+- Enables forensic analysis
+
+Silent failures are turned into observable events.
+
+
+10. Malware and hygiene
+
+Components:
+- ClamAV
+- Regular updates
+- User awareness
+
+Role:
+Handle accidental and indirect threats.
+
+Contribution:
+- Detects known malware
+- Reduces cross-platform infection risk
+- Improves system hygiene
+
+Not all threats are targeted attacks.
+
+
+11. Safe privilege management
+
+Components:
+- doas
+- Minimal privilege elevation
+- Verified sudo removal
+
+Role:
+Protect the boundary between user and administrator.
+
+Contribution:
+- Smaller attack surface than sudo
+- Explicit, auditable privilege usage
+- Reduced misconfiguration risk
+
+Privilege escalation paths are tightly controlled.
+
+
+12. Layer interaction and failure handling
+
+No single layer is trusted completely.
+
+If a browser is exploited:
+- Flatpak isolates it
+- AppArmor restricts behavior
+- hardened_malloc breaks exploitation
+- Firewall limits exfiltration
+- auditd logs activity
+
+If local access is gained:
+- doas limits escalation
+- Kernel hardening blocks paths
+- AIDE detects persistence
+
+If physical access occurs:
+- USBGuard blocks devices
+- Bootloader password blocks tampering
+- Kernel lockdown limits introspection
+
+Each layer assumes another may fail.
+
+
+Conclusion
+
+This security concept is not about paranoia. It is about engineering.
+
+The goals are:
+- Reduced attack surface
+- Containment of inevitable bugs
+- High attacker cost
+- Early detection
+- Long-term maintainability
+
+Defense in depth does not mean unbreakable.
+It means compromise is unlikely, noisy, and expensive.
+Arch Linux Security Hardening – Overall Security Concept
+    </div>
+
+  <span class="prompt">$</span> 
+  <a href="../blog.html" class="prompt">cd /home/user/blog</a>
+  <span class="cursor"></span>
+</div>
+</body>
+</html>
+
