@@ -236,27 +236,6 @@ Blocks ads, trackers, malware, and phishing domains.
 No browser extensions required.
 Minimal resource usage.
 
-Auditing with auditd
-
-What is done:
-auditd is installed, enabled, and hardened rules are applied.
-
-Commands:
-doas pacman -S audit
-doas systemctl enable --now auditd
-
-Audit rules include:
-Monitoring doas usage
-Changes to /etc
-User and group database changes
-Kernel module loading and unloading
-/home and /boot access
-Time and clock modifications
-
-Why this is good:
-Provides detailed security event logging.
-Essential for intrusion detection and forensic analysis.
-
 Safe removal of sudo
 
 What is done:
