@@ -14,9 +14,7 @@
 eba — ELF Binaries Analyzer
 A practical toolkit for static ELF analysis on Linux
 
-
 Motivation
-
 ELF files are the backbone of every Linux system.
 Every binary, shared library, and many kernel artifacts follow the Executable and Linkable Format (ELF).
 
@@ -41,7 +39,6 @@ that provides quick static insights into ELF binaries
 — without executing the binary.
 
 Design Philosophy
-
 eba follows three simple principles:
 
 1. Static first
@@ -63,9 +60,7 @@ eba follows three simple principles:
    - known metrics (Entropy, DT_NEEDED, Symbols)
 
 Features in Detail
-
 ELF Header Summary
-
 The ELF header is the entry point for any analysis.
 
 eba shows, among other things:
@@ -92,7 +87,6 @@ Why is this important?
 - Missing .symtab → Stripping / Hardening
 
 Strings Extraction
-
 eba extracts the first 10 printable strings.
 
 This may sound trivial—but it’s extremely effective:
@@ -128,9 +122,7 @@ Interpretation:
 -> Very high entropy in .text or .data is a strong warning signal.
 
 Symbol Table Inspection
-
 eba shows the first 40 symbols from the symbol table.
-
 Even in stripped binaries, often the following are visible:
 - .dynsym
 - Import symbols
@@ -141,7 +133,6 @@ Even in stripped binaries, often the following are visible:
 - Debug leaks
 
 DT_NEEDED — Shared Library Dependencies
-
 The tool `list_dtneeded` parses the PT_DYNAMIC segment and extracts all DT_NEEDED entries.
 
 Examples:
@@ -155,7 +146,6 @@ Why is this relevant?
 - Malware often uses minimal or unusual imports
 
 Disassembly (Capstone)
-
 Using Capstone, eba disassembles the first 20 instructions.
 
 The goal is not a full analysis, but to:
@@ -166,14 +156,12 @@ The goal is not a full analysis, but to:
 -> Ideal before switching to Ghidra.
 
 SHA256 Hashing
-
 Integrity and comparison:
 - Cluster malware samples
 - Compare builds
 - Check reproducibility
-
 eba uses OpenSSL for clean SHA256 calculation.
-
+        
 Interactive Section Viewer
 
 After analysis, eba starts an interactive hex viewer:
@@ -187,7 +175,6 @@ After analysis, eba starts an interactive hex viewer:
 - Quick byte inspection
 
 Installation & Dependencies
-
 Required Tools:
 - bash
 - binutils (readelf, strings)
@@ -202,29 +189,23 @@ Debian / Ubuntu:
 sudo apt install build-essential binutils python3 libcapstone-dev libssl-dev less
 
 Arch Linux:
-
 sudo pacman -S base-devel binutils python less openssl capstone
 
 Build:
-
 make
-
 All C tools are built in `bin/`.
 
 Usage:
-
 chmod +x analyze.sh
 ./analyze.sh -f /path/to/binary
 
 Process:
-
 - Automatic analysis
 - Output of all metrics
 - Switch to interactive mode
 - Select section or press `q` to quit
 
 Project Structure:
-
 .
 ├── analyze.sh
 ├── bin/
@@ -237,40 +218,33 @@ Project Structure:
 └── Makefile
 
 Typical Use Cases:
-
 - Malware triage
 - Entropy spikes
 - Minimal imports
 - Encrypted sections
 
 Reverse Engineering:
-
 - Quick preliminary analysis
 - Find symbol leaks
 - Recognize toolchains
 
 Security Audits:
-
 - Hardening checks
 - Dependency audit
 - Stripped vs unstripped binaries
 
 DevOps / CI:
-
 - Binary fingerprinting
 - Regression checks
 - Supply chain audits
 
 Why not a large framework?
-
 eba is deliberately not:
-
  A Ghidra replacement
  A debugger
  An emulator
 
 It is a scout tool.
-
 First, get an overview, then dig deeper.
 
     </div>
