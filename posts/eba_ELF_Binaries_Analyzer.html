@@ -82,14 +82,14 @@ The tool `sections` lists all ELF sections with:
 - Size
 
 Why is this important?
-- Unusual sections → Packing / Obfuscation
-- Very large .rodata → Embedded data
-- Missing .symtab → Stripping / Hardening
+- Unusual sections -> Packing / Obfuscation
+- Very large .rodata -> Embedded data
+- Missing .symtab -> Stripping / Hardening
 
 Strings Extraction
 eba extracts the first 10 printable strings.
 
-This may sound trivial—but it’s extremely effective:
+This may sound trivial-but it’s extremely effective:
 - URLs
 - IP addresses
 - Debug artifacts
@@ -141,7 +141,7 @@ Examples:
 - libcurl.so
 
 Why is this relevant?
-- Unexpected dependencies → Red flag
+- Unexpected dependencies -> Red flag
 - Static vs dynamic
 - Malware often uses minimal or unusual imports
 
