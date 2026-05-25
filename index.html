@@ -1,67 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>rhjddjdbc</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="assets/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>rhjddjdbc · dev & sec terminal</title>
+  <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
 
 <div class="terminal">
 
-    <!-- intro -->
-    <div class="prompt">$ whoami</div>
-    <div class="content">
-<a href="https://github.com/rhjddjdbc" target="_blank">rhjddjdbc</a>
-<a href="blog.html">blog/</a>
-<a href="https://github.com/rhjddjdbc/meme" target="_blank">memes/</a>
-DevOps · Linux · IT Security · Reverse Engineering
-    </div>
+  <div class="prompt">$ whoami</div>
+  <div class="content">
+    <a href="https://github.com/rhjddjdbc" target="_blank">rhjddjdbc</a>
+    <a href="https://rhjddjdbc.github.io/blog/" target="_blank">blog/</a>
+    <a href="https://github.com/rhjddjdbc/meme" target="_blank">memes/</a>
+    (Sec)DevOps · Linux · IT Security · Reverse Engineering
+  </div>
 
-    <div class="prompt">$ cat about.txt</div>
-    <div class="content">
-Passionate about low-level tooling, security, and automation.
-Building CLI tools with x86-64 Assembly, C, Rust and Bash.
+  <div class="prompt">$ cat about.txt</div>
+  <div class="content">
+    Passionate about low-level tooling, security, and automation.
+    Building CLI tools with x86-64 Assembly, C, Rust and Bash.
 
-languages/
-  - Bash
-  - C
-  - Rust
-  - x86-64 Assembly
+    languages/
+      - Bash
+      - C
+      - Rust
+      - x86-64 Assembly
 
-markup/
-  - HTML
-  - CSS
-  - Markdown
+    markup/
+      - HTML
+      - CSS
+      - Markdown
 
-tools/
-  - Linux / FreeBSD
-  - Docker / Kubernetes
-  - Git / Jenkins
-  - MySQL
-  - Ghidra
-  - n8n
-    </div>
+    tools/
+      - Linux (Arch, NixOS, Proxmox) / FreeBSD / OpenBSD / GNU Hurd
+      - Xen, KVM, QEMU, Docker/Podman, LXC
+      - Jenkins, Kubernetes, make, n8n
+      - Git, Jujutsu
+      - Ghidra, radare2, GDB
+      - MySQL, SQLite, MongoDB
+      - JSON, YAML, TOML, CSV, XML
+  </div>
 
-<!-- projects -->
-<div class="prompt">$ ls projects</div>
-<div class="content">
-[Networking]    <a href="https://github.com/rhjddjdbc/http-rust" target="_blank">http-rust     </a> -> Multithreaded HTTP server
-[Security]      <a href="https://github.com/rhjddjdbc/eba" target="_blank">eba           </a> -> ELF analyzer
-[Security]      <a href="https://github.com/rhjddjdbc/viscan" target="_blank">viscan        </a> -> Malware scanner
-[Recon]         <a href="https://github.com/rhjddjdbc/crawldork" target="_blank">crawldork     </a> -> URL discovery
-[Networking]    <a href="https://github.com/rhjddjdbc/Reverse-shell" target="_blank">reverse-shell </a> -> GPG + SSH shell
-[Hardening]     <a href="https://github.com/rhjddjdbc/arch-hardened" target="_blank">arch-hardened </a> -> Arch Linux hardening
-[Crypto]        <a href="https://github.com/rhjddjdbc/vaultx" target="_blank">vaultx        </a> -> AES/RSA password manager
-[Pentest]       <a href="https://github.com/rhjddjdbc/pwny" target="_blank">pwny          </a> -> XSS / SQLI / LFI scanner
-[Container]     <a href="https://github.com/rhjddjdbc/dcg" target="_blank">dcg           </a> -> Dev container generator
-[Networking]    <a href="https://github.com/rhjddjdbc/LocalNetScan" target="_blank">LocalNetScan  </a> -> Local Network Scanner
-[Crypto]        <a href="https://github.com/rhjddjdbc/otp-asm" target="_blank">otp-asm       </a> -> One Time Pad Cli Tool in x86_64 asm
-   </div>
+  <div class="prompt">$ ls projects</div>
+  <div class="content">
+    [Pentest]       <a href="https://github.com/rhjddjdbc/elf_fuzzer" target="_blank">elf_fuzzer</a>       -> Mutation fuzzer for discovering crashes in ELF binaries
+    [Networking]    <a href="https://github.com/rhjddjdbc/http-rust" target="_blank">http-rust</a>        -> Multithread HTTP server with rate limiting
+    [Security/RE]   <a href="https://github.com/rhjddjdbc/eba" target="_blank">eba</a>              -> ELF Analyzer – headers, entropy, disassembly, strings
+    [Security]      <a href="https://github.com/rhjddjdbc/viscan" target="_blank">viscan</a>           -> Lightweight malware scanner using ClamAV signatures
+    [Crypto]        <a href="https://github.com/rhjddjdbc/lms-cli" target="_blank">lms-cli</a>          -> RFC 8554 compliant LMS signature tool
+    [Recon]         <a href="https://github.com/rhjddjdbc/crawldork" target="_blank">crawldork</a>        -> URL discovery with sitemap + optional JS rendering
+    [Networking]    <a href="https://github.com/rhjddjdbc/Reverse-shell" target="_blank">Reverse-shell</a>    -> Encrypted GPG + SSH reverse shell
+    [Networking]    <a href="https://github.com/rhjddjdbc/LocalNetScan" target="_blank">LocalNetScan</a>     -> Fast network/port scanner with MAC spoofing
+    [Hardening]     <a href="https://github.com/rhjddjdbc/arch-hardened" target="_blank">arch-hardened</a>    -> Arch Linux hardening (AppArmor, audit, AIDE)
+    [Crypto]        <a href="https://github.com/rhjddjdbc/vaultx" target="_blank">VaultX</a>           -> AES‑256 / RSA password manager with HIBP check
+    [Pentest]       <a href="https://github.com/rhjddjdbc/pwny" target="_blank">pwny</a>             -> Bash scanner for XSS, SQLi, LFI, etc.
+    [Container]     <a href="https://github.com/rhjddjdbc/dcg" target="_blank">dcg</a>              -> Dev container generator with profiles, rootless users, oh-my-zsh
+    [Crypto]        <a href="https://github.com/rhjddjdbc/otp-asm" target="_blank">otp-asm</a>          -> One Time Pad CLI tool in x86-64 Assembly
+  </div>
 
-    <!-- cursor -->
-<div class="prompt">$ <span class="cursor"></span></div>
+  <div class="prompt">$ <span class="cursor"></span></div>
 </div>
 
 </body>
